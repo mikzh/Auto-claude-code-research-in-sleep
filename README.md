@@ -106,7 +106,7 @@ These skills compose into a full research lifecycle:
 │                                                              │
 │   Typical flow:                                              │
 │   1. /research-lit "discrete diffusion models"               │
-│   2. /idea-creator "factorized gap in D-LLMs"               │
+│   2. /idea-creator "DLLMs post training"               │
 │   3. Review ranked ideas, pick top 2-3                       │
 │   4. /novelty-check "top idea" (deep verification)           │
 │   5. /research-review "top idea" (critical feedback)         │

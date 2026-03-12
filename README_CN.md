@@ -71,7 +71,7 @@
 
 ```
 1. /research-lit "discrete diffusion models"    ← 搜论文，整理全景
-2. /idea-creator "factorized gap in D-LLMs"     ← 自动生成 8-12 个 idea，筛选排序
+2. /idea-creator "DLLMs post training"     ← 自动生成 8-12 个 idea，筛选排序
 3. 选 top 2-3 个 idea
 4. /novelty-check "top idea"                     ← 查新：有没有人做过？
 5. /research-review "top idea"                   ← 让外部 LLM 批判你的想法
