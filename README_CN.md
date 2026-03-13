@@ -8,7 +8,7 @@
 
 > 🌙 **让 Claude Code 在你睡觉时做科研。** 醒来发现论文已被打分、弱点已被定位、实验已跑完、叙事已重写——全自动。
 
-基于 [Claude Code](https://docs.anthropic.com/en/docs/claude-code) 的自定义 Skills，用于自主 ML 科研工作流。核心机制是**跨模型协作**——Claude Code 负责执行（读文件、写代码、跑实验、收结果），外部 LLM（通过 [Codex MCP](https://github.com/openai/codex)）负责评审（打分、找弱点、建议修复）。两个模型互不评自己的作业，形成真正的反馈循环。🔀 **也支持[替代模型组合](#-替代模型组合glm--minimax)（如 GLM + MiniMax）——无需 Claude/OpenAI API。**
+基于 [Claude Code](https://docs.anthropic.com/en/docs/claude-code) 的自定义 Skills，用于自主 ML 科研工作流。核心机制是**跨模型协作**——Claude Code 负责执行（读文件、写代码、跑实验、收结果），外部 LLM（通过 [Codex MCP](https://github.com/openai/codex)）负责评审（打分、找弱点、建议修复）。两个模型互不评自己的作业，形成真正的反馈循环。🔀 **也支持[替代模型组合](#-替代模型组合)（如 GLM + GPT、GLM + MiniMax）——无需 Claude API。**
 
 ## 📈 真实运行效果
 
@@ -265,14 +265,15 @@ Skills 就是普通的 Markdown 文件，fork 后随意改：
 - **Prompt 模板** — 定制评审人格和评估标准
 - **`allowed-tools`** — 限制或扩展每个 skill 可用的工具
 
-## 🔀 替代模型组合：GLM + MiniMax
+## 🔀 替代模型组合
 
-没有 Claude / OpenAI API？可以用 **GLM（智谱）** 做执行者 + **MiniMax-2.5** 做审稿人——同样的跨模型架构，不同的提供商。
+没有 Claude / OpenAI API？可以换用其他模型——同样的跨模型架构，不同的提供商。
 
-| 角色 | 默认 | 替代 |
-|------|------|------|
-| 执行者（Claude Code） | Claude Opus/Sonnet | GLM-5 / GLM-4.7（智谱 API） |
-| 审稿人（Codex MCP） | GPT-5.4 | MiniMax-M2.5（MiniMax API） |
+| 角色 | 默认 | 方案 A：GLM + GPT | 方案 B：GLM + MiniMax |
+|------|------|-------------------|----------------------|
+| 执行者（Claude Code） | Claude Opus/Sonnet | GLM-5（智谱 API） | GLM-5（智谱 API） |
+| 审稿人（Codex MCP） | GPT-5.4 | GPT-5.4（OpenAI API） | MiniMax-M2.5（MiniMax API） |
+| 需要 OpenAI API？ | 是 | 是 | **否** |
 
 ### 第 1 步：安装 Claude Code 和 Codex CLI
 
@@ -285,6 +286,37 @@ npm install -g @openai/codex
 
 终端输入：`nano ~/.claude/settings.json`
 
+<details>
+<summary><b>方案 A：GLM（执行者）+ GPT（审稿人）</b> — 只替换 Claude，保留 GPT-5.4 审稿</summary>
+
+```json
+{
+    "env": {
+        "ANTHROPIC_AUTH_TOKEN": "your_zai_api_key",
+        "ANTHROPIC_BASE_URL": "https://api.z.ai/api/anthropic",
+        "API_TIMEOUT_MS": "3000000",
+        "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-4.5-air",
+        "ANTHROPIC_DEFAULT_SONNET_MODEL": "glm-4.7",
+        "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-5"
+    },
+    "mcpServers": {
+        "codex": {
+            "command": "/opt/homebrew/bin/codex",
+            "args": [
+                "mcp-server"
+            ]
+        }
+    }
+}
+```
+
+Codex CLI 使用你已有的 `OPENAI_API_KEY`（来自 `~/.codex/config.toml` 或环境变量）——审稿端不需要额外配置。
+
+</details>
+
+<details>
+<summary><b>方案 B：GLM（执行者）+ MiniMax（审稿人）</b> — 无需 Claude 或 OpenAI API</summary>
+
 ```json
 {
     "env": {
@@ -294,7 +326,7 @@ npm install -g @openai/codex
         "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-4.5-air",
         "ANTHROPIC_DEFAULT_SONNET_MODEL": "glm-4.7",
         "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-5",
-        "CODEX_API_KEY": "your_zai_api_key",
+        "CODEX_API_KEY": "your_minimax_api_key",
         "CODEX_API_BASE": "https://api.minimax.chat/v1/",
         "CODEX_MODEL": "MiniMax-M2.5"
     },
@@ -308,6 +340,8 @@ npm install -g @openai/codex
     }
 }
 ```
+
+</details>
 
 保存：`Ctrl+O` → `Enter` → `Ctrl+X`
 
@@ -339,7 +373,7 @@ claude
 
 这让 GLM（作为 Claude Code 执行者）先熟悉 skill 文件并提前发现兼容性问题——而不是在跑到一半时才报错。
 
-> ⚠️ **注意：** GLM 和 MiniMax 的行为可能与 Claude 和 GPT-5.4 有所不同。你可能需要调整 skill 中的 `REVIEWER_MODEL` 并微调 prompt 模板以获得最佳效果。核心的跨模型架构不变。
+> ⚠️ **注意：** 替代模型的行为可能与 Claude 和 GPT-5.4 有所不同。你可能需要调整 skill 中的 `REVIEWER_MODEL` 并微调 prompt 模板以获得最佳效果。核心的跨模型架构不变。
 
 ## 📋 Roadmap
 

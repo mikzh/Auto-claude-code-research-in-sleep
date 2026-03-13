@@ -8,7 +8,7 @@
 
 > 🌙 **Let Claude Code do research while you sleep.** Wake up to find your paper scored, weaknesses identified, experiments run, and narrative rewritten — autonomously.
 
-Custom [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skills for autonomous ML research workflows. These skills orchestrate **cross-model collaboration** — Claude Code drives the research while an external LLM (via [Codex MCP](https://github.com/openai/codex)) acts as a critical reviewer. 🔀 **Also supports [alternative model combinations](#-alternative-model-combination-glm--minimax) (e.g., GLM + MiniMax) — no Claude/OpenAI API required.**
+Custom [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skills for autonomous ML research workflows. These skills orchestrate **cross-model collaboration** — Claude Code drives the research while an external LLM (via [Codex MCP](https://github.com/openai/codex)) acts as a critical reviewer. 🔀 **Also supports [alternative model combinations](#-alternative-model-combinations) (e.g., GLM + GPT, GLM + MiniMax) — no Claude API required.**
 
 ## 📈 Score Progression (Real Run)
 
@@ -318,14 +318,15 @@ Override inline: `/research-lit "topic" — paper library: ~/Zotero/storage/`
 - **Prompt templates** — tailor the review persona and evaluation criteria
 - **`allowed-tools`** — restrict or expand what each skill can do
 
-## 🔀 Alternative Model Combination: GLM + MiniMax
+## 🔀 Alternative Model Combinations
 
-Don't have Claude / OpenAI API access? You can run the full ARIS pipeline using **GLM (ZhiPu)** as the executor and **MiniMax-2.5** as the reviewer — same cross-model architecture, different providers.
+Don't have Claude / OpenAI API access? You can swap in other models — same cross-model architecture, different providers.
 
-| Role | Default | Alternative |
-|------|---------|-------------|
-| Executor (Claude Code) | Claude Opus/Sonnet | GLM-5 / GLM-4.7 (via ZhiPu API) |
-| Reviewer (Codex MCP) | GPT-5.4 | MiniMax-M2.5 (via MiniMax API) |
+| Role | Default | Alt A: GLM + GPT | Alt B: GLM + MiniMax |
+|------|---------|-------------------|----------------------|
+| Executor (Claude Code) | Claude Opus/Sonnet | GLM-5 (ZhiPu API) | GLM-5 (ZhiPu API) |
+| Reviewer (Codex MCP) | GPT-5.4 | GPT-5.4 (OpenAI API) | MiniMax-M2.5 (MiniMax API) |
+| Need OpenAI API? | Yes | Yes | **No** |
 
 ### Step 1: Install Claude Code & Codex CLI
 
@@ -338,6 +339,37 @@ npm install -g @openai/codex
 
 Open with: `nano ~/.claude/settings.json`
 
+<details>
+<summary><b>Alt A: GLM (executor) + GPT (reviewer)</b> — Only replace Claude, keep GPT-5.4 as reviewer</summary>
+
+```json
+{
+    "env": {
+        "ANTHROPIC_AUTH_TOKEN": "your_zai_api_key",
+        "ANTHROPIC_BASE_URL": "https://api.z.ai/api/anthropic",
+        "API_TIMEOUT_MS": "3000000",
+        "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-4.5-air",
+        "ANTHROPIC_DEFAULT_SONNET_MODEL": "glm-4.7",
+        "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-5"
+    },
+    "mcpServers": {
+        "codex": {
+            "command": "/opt/homebrew/bin/codex",
+            "args": [
+                "mcp-server"
+            ]
+        }
+    }
+}
+```
+
+Codex CLI uses your existing `OPENAI_API_KEY` (from `~/.codex/config.toml` or environment) — no extra config needed for the reviewer side.
+
+</details>
+
+<details>
+<summary><b>Alt B: GLM (executor) + MiniMax (reviewer)</b> — No Claude or OpenAI API needed</summary>
+
 ```json
 {
     "env": {
@@ -347,7 +379,7 @@ Open with: `nano ~/.claude/settings.json`
         "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-4.5-air",
         "ANTHROPIC_DEFAULT_SONNET_MODEL": "glm-4.7",
         "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-5",
-        "CODEX_API_KEY": "your_zai_api_key",
+        "CODEX_API_KEY": "your_minimax_api_key",
         "CODEX_API_BASE": "https://api.minimax.chat/v1/",
         "CODEX_MODEL": "MiniMax-M2.5"
     },
@@ -361,6 +393,8 @@ Open with: `nano ~/.claude/settings.json`
     }
 }
 ```
+
+</details>
 
 Save: `Ctrl+O` → `Enter` → `Ctrl+X`
 
@@ -392,7 +426,7 @@ For each skill, confirm: (1) it loads without errors, (2) the frontmatter is par
 
 This lets GLM (acting as Claude Code) familiarize itself with the skill files and catch any compatibility issues upfront — rather than discovering them mid-workflow when it's expensive to fail.
 
-> ⚠️ **Note:** GLM and MiniMax may behave differently from Claude and GPT-5.4. You may need to adjust `REVIEWER_MODEL` in the skills and tune prompt templates for best results. The core cross-model architecture remains the same.
+> ⚠️ **Note:** Alternative models may behave differently from Claude and GPT-5.4. You may need to adjust `REVIEWER_MODEL` in the skills and tune prompt templates for best results. The core cross-model architecture remains the same.
 
 ## 📋 Roadmap
 
