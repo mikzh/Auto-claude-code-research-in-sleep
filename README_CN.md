@@ -55,6 +55,19 @@ claude
 - 🛑 **Human-in-the-loop** — 关键决策点可配置检查点。`AUTO_PROCEED=true` 全自动，`false` 逐步审批
 - 📱 **[飞书通知](#-飞书lark-集成可选)** — 三种模式：关闭（默认）、仅推送（webhook，手机收通知）、双向交互（在飞书里审批/回复）。未配置时零影响
 
+  <details>
+  <summary>预览：推送卡片（群聊）&amp; 交互对话（私聊）</summary>
+
+  **仅推送** — 群聊彩色卡片（实验完成、checkpoint、报错、流水线结束）：
+
+  <img src="assets/feishu_push.jpg" width="700" />
+
+  **双向交互** — 与 Claude Code 私聊（审批/拒绝、自定义指令）：
+
+  <img src="assets/feishu_interactive.jpg" width="700" />
+
+  </details>
+
 ---
 
 ## 📈 真实运行效果
@@ -415,6 +428,10 @@ cp -r obsidian-skills/.claude /path/to/your/vault/
 ### 📱 飞书/Lark 集成（可选）
 
 实验跑完、review 出分、checkpoint 等你审批——手机收飞书通知，不用守在终端前。
+
+| 仅推送（群聊卡片） | 双向交互（私聊） |
+|:-:|:-:|
+| <img src="assets/feishu_push.jpg" width="450" /> | <img src="assets/feishu_interactive.jpg" width="450" /> |
 
 **三种模式，按需选择：**
 

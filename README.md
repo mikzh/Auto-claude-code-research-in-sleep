@@ -55,6 +55,19 @@ See [full setup guide](#%EF%B8%8F-setup) for details and [alternative model comb
 - 🛑 **Human-in-the-loop** — configurable checkpoints at key decisions. `AUTO_PROCEED=true` for full autopilot, `false` to approve each step
 - 📱 **[Feishu/Lark notifications](#-feishulark-integration-optional)** — three modes: off (default), push-only (webhook, mobile alerts), interactive (approve/reject from Feishu). Zero impact when unconfigured
 
+  <details>
+  <summary>Preview: Push cards (group) &amp; Interactive chat (private)</summary>
+
+  **Push Only** — group chat cards (experiment done, checkpoint, error, pipeline complete):
+
+  <img src="assets/feishu_push.jpg" width="700" />
+
+  **Interactive** — private chat with Claude Code (approve/reject, custom instructions):
+
+  <img src="assets/feishu_interactive.jpg" width="700" />
+
+  </details>
+
 ---
 
 ## 📈 Score Progression (Real Run)
@@ -499,6 +512,10 @@ cp -r obsidian-skills/.claude /path/to/your/vault/
 ### 📱 Feishu/Lark Integration (Optional)
 
 Get mobile notifications when experiments finish, reviews score, or checkpoints need your input — without sitting in front of the terminal.
+
+| Push Only (group cards) | Interactive (private chat) |
+|:-:|:-:|
+| <img src="assets/feishu_push.jpg" width="450" /> | <img src="assets/feishu_interactive.jpg" width="450" /> |
 
 **Three modes — you choose per-project:**
 
