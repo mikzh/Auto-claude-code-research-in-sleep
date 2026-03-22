@@ -134,5 +134,6 @@ codex -C /path/to/your/project
 让这条路径保持足够窄：
 
 - 基础能力继续复用 `skills/skills-codex/*`
-- 只在 `skills/skills-codex-gemini-review/*` 里覆盖 review-heavy skills
+- 只在 `skills/skills-codex-gemini-review/*` 里覆盖 reviewer-aware skills
 - 让 `mcp-servers/gemini-review/server.py` 只聚焦 `review*` 兼容契约
+- 如果某个 skill 需要审查 poster PNG，就通过 direct Gemini API backend 传 `imagePaths`，而不是再发明第二套 bridge

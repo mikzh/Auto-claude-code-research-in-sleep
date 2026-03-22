@@ -133,5 +133,6 @@ No special project config file is required for this path.
 Keep this path intentionally narrow:
 
 - reuse `skills/skills-codex/*` unchanged
-- only override review-heavy skills in `skills/skills-codex-gemini-review/*`
+- only override the reviewer-aware skills in `skills/skills-codex-gemini-review/*`
 - keep `mcp-servers/gemini-review/server.py` focused on the `review*` compatibility contract
+- when a skill needs poster PNG review, pass local `imagePaths` through the direct Gemini API backend instead of inventing a second bridge
